@@ -1,0 +1,52 @@
+Screen {
+    overflow: auto;
+}
+
+#app {
+    layout: vertical;
+}
+
+#text {
+}
+
+#options {
+    layout: horizontal;
+    width: 100%;
+    background: purple 30%;
+    content-align: center middle;
+    align: center middle;
+    height: 10;
+}
+
+#operation {
+    width: 30%;
+}
+
+#algorithm {
+    width: 30%;
+}
+
+#execute {
+    width: 30%;
+    text-align: center;
+    align: center middle;
+    text-style: bold;
+    background: green 50%;
+}
+
+#input {
+    width: 40%;
+}
+
+#output {
+    width: 40%;
+}
+
+#alphabet {
+    width: 20%;
+}
+
+Label {
+    width: 100%;
+    text-align: center;
+}
