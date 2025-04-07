@@ -30,7 +30,7 @@ OPERATION_LABEL = "Operation"
 
 ALGORITHM_ID = "algorithm"
 ALGORITHM_ID_CODE = "#algorithm"
-ALGORITHM_LABEL = "algorithm"
+ALGORITHM_LABEL = "Algorithm"
 
 EXECUTE_ID = "execute"
 EXECUTE_ID_CODE = "#execute"
