@@ -67,7 +67,7 @@ class EncoderDecoder(App):
             with Horizontal(id=TEXT_ID):
                 with VerticalScroll(id=INPUT_ID):
                     yield Label(INPUT_LABEL)
-                    yield Input(id=INPUT_AREA_ID, restrict=ASCII255_REGEX, placeholder=INPUT_PLACEHOLDER)
+                    yield Input(id=INPUT_AREA_ID, restrict=ASCII255_REGEX, placeholder=INPUT_ENCODE_PLACEHOLDER)
                     yield TextArea(id=INPUT_TEXT_ID, read_only=True)
                 with VerticalScroll(id=OUTPUT_ID):
                     yield Label(OUTPUT_LABEL)
@@ -99,11 +99,13 @@ class EncoderDecoder(App):
                 self.query_one(INPUT_TEXT_ID_CODE).clear()
                 self.query_one(OUTPUT_TEXT_ID_CODE).clear()
                 self.query_one(INPUT_AREA_ID_CODE).restrict = ASCII255_REGEX
+                self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER
             case Operation.DECODE:
                 self.query_one(INPUT_AREA_ID_CODE).clear()
                 self.query_one(INPUT_TEXT_ID_CODE).clear()
                 self.query_one(OUTPUT_TEXT_ID_CODE).clear()
                 self.query_one(INPUT_AREA_ID_CODE).restrict = BINARY_REGEX
+                self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_DECODE_PLACEHOLDER
         
     @on(RadioSet.Changed, ALGORITHM_ID_CODE)
     def on_algorithm_changed(self, event: RadioSet.Changed) -> None:
