@@ -1,67 +1,12 @@
-from enum import StrEnum
-
-from textual import events, on
+from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Vertical, Horizontal, VerticalScroll
-from textual.css.query import NoMatches
-from textual.reactive import var
 from textual.widgets import Button, TextArea, Header, Footer, RadioButton, RadioSet, Input, Label, Pretty
 
-#region Constants
+from domain.constants import *
+from domain.enums import *
 
-ASCII255_REGEX = r"[\x00-ÿ]*"
-BINARY_REGEX = r"[01]*"
-
-APP_ID = "app"
-
-TEXT_ID = "text"
-
-INPUT_ID = "input"
-INPUT_AREA_ID = "inputArea"
-INPUT_AREA_ID_CODE = "#inputArea"
-INPUT_TEXT_ID = "inputText"
-INPUT_TEXT_ID_CODE = "#inputText"
-INPUT_LABEL = "Input"
-INPUT_PLACEHOLDER = "Text to encode/decode"
-
-OUTPUT_ID = "output"
-OUTPUT_TEXT_ID = "outputText"
-OUTPUT_TEXT_ID_CODE = "#outputText"
-OUTPUT_LABEL = "Output"
-
-ALPHABET_ID = "alphabet"
-ALPHABET_LABEL = "Alphabet"
-
-OPTIONS_ID = "options"
-OPTIONS_LABEL = "Options"
-
-OPERATION_ID = "operation"
-OPERATION_ID_CODE = "#operation"
-OPERATION_LABEL = "Operation"
-
-ALGORITHM_ID = "algorithm"
-ALGORITHM_ID_CODE = "#algorithm"
-ALGORITHM_LABEL = "algorithm"
-
-EXECUTE_ID = "execute"
-EXECUTE_ID_CODE = "#execute"
-EXECUTE_LABEL = "Execute"
-
-#endregion
-
-#region Enums
-
-class Operation(StrEnum):
-    ENCODE = "Encode",
-    DECODE = "Decode"
-    
-class Algorithm(StrEnum):
-    GOLOMB = "Golomb",
-    ELIASGAMMA = "Elias-Gamma",
-    FIBONACCI = "Fibonacci/Zeckendorf",
-    HUFFMAN = "Huffman"
-
-#endregion
+from services import golomb, eliasgamma, fibonacci, huffman
 
 class EncoderDecoder(App):
 
@@ -72,12 +17,45 @@ class EncoderDecoder(App):
         alphabet[chr(i)] = i  
     input = ""
     output = ""
-
+    
+    def execute(self) -> None: 
+        match self.algorithm:
+            case Algorithm.GOLOMB:
+                match self.operation:
+                    case Operation.ENCODE:
+                        self.output = golomb.encode(self.input)
+                    case Operation.DECODE:
+                        self.output = golomb.decode(self.input)
+                                        
+            case Algorithm.ELIASGAMMA:
+                match self.operation:
+                    case Operation.ENCODE:
+                        self.output = eliasgamma.encode(self.input)
+                    case Operation.DECODE:
+                        self.output = eliasgamma.decode(self.input)
+                                     
+            case Algorithm.FIBONACCI:
+                match self.operation:
+                    case Operation.ENCODE:
+                        self.output = fibonacci.encode(self.input)
+                    case Operation.DECODE:
+                        self.output = fibonacci.decode(self.input)
+                              
+            case Algorithm.HUFFMAN:   
+                match self.operation:
+                    case Operation.ENCODE:
+                        self.output = huffman.decode(self.input)
+                    case Operation.DECODE:
+                        self.output = huffman.decode(self.input)
+                        
+        self.query_one(OUTPUT_TEXT_ID_CODE).clear()
+        self.query_one(OUTPUT_TEXT_ID_CODE).insert(self.output)
+        
     #region GUI
 
     AUTO_FOCUS = "Input"
 
-    CSS_PATH = "encoder_decoder.tcss"
+    CSS_PATH = "ui/style.tcss"
     
     BINDINGS = [
         ("q", "quit", "Quit"),
@@ -147,10 +125,6 @@ class EncoderDecoder(App):
         self.execute()
         
     #endregion
-        
-    def execute(self) -> None:
-        self.query_one(OUTPUT_TEXT_ID_CODE).clear()
-        self.query_one(OUTPUT_TEXT_ID_CODE).insert(self.input)
 
 if __name__ == "__main__":
     EncoderDecoder().run(inline=True)
