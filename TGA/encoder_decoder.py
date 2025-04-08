@@ -12,9 +12,12 @@ class EncoderDecoder(App):
 
     operation = Operation.ENCODE
     algorithm = Algorithm.GOLOMB
+    
+    huffman_alphabet = {}
     alphabet = {}
     for i in range(256):
         alphabet[chr(i)] = i  
+    
     input = ""
     output = ""
     
@@ -23,30 +26,30 @@ class EncoderDecoder(App):
             case Algorithm.GOLOMB:
                 match self.operation:
                     case Operation.ENCODE:
-                        self.output = golomb.encode(self.input)
+                        self.output = golomb.encode(self.input, self.alphabet)
                     case Operation.DECODE:
-                        self.output = golomb.decode(self.input)
+                        self.output = golomb.decode(self.input, self.alphabet)
                                         
             case Algorithm.ELIASGAMMA:
                 match self.operation:
                     case Operation.ENCODE:
-                        self.output = eliasgamma.encode(self.input)
+                        self.output = eliasgamma.encode(self.input, self.alphabet)
                     case Operation.DECODE:
-                        self.output = eliasgamma.decode(self.input)
+                        self.output = eliasgamma.decode(self.input, self.alphabet)
                                      
             case Algorithm.FIBONACCI:
                 match self.operation:
                     case Operation.ENCODE:
-                        self.output = fibonacci.encode(self.input)
+                        self.output = fibonacci.encode(self.input, self.alphabet)
                     case Operation.DECODE:
-                        self.output = fibonacci.decode(self.input)
+                        self.output = fibonacci.decode(self.input, self.alphabet)
                               
             case Algorithm.HUFFMAN:   
                 match self.operation:
                     case Operation.ENCODE:
-                        self.output = huffman.decode(self.input)
+                        self.output = huffman.decode(self.input, self.huffman_alphabet)
                     case Operation.DECODE:
-                        self.output = huffman.decode(self.input)
+                        self.output = huffman.decode(self.input, self.huffman_alphabet)
                         
         self.query_one(OUTPUT_TEXT_ID_CODE).clear()
         self.query_one(OUTPUT_TEXT_ID_CODE).insert(self.output)
