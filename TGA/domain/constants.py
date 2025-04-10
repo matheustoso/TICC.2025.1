@@ -1,7 +1,14 @@
-ASCII255_REGEX = r"[\x00-ÿ]*"
+ASCII_REGEX = r"[\x00-ÿ]*"
+ASCII_LENGTH = 256
 BINARY_REGEX = r"[01]*"
 
+THEME = "gruvbox"
+
 APP_ID = "app"
+
+TEXT_CONTAINER_ID = "textContainer"
+OPTIONS_CONTAINER_ID = "optionsContainer"
+
 
 TEXT_ID = "text"
 
@@ -39,9 +46,18 @@ EXECUTE_ID = "execute"
 EXECUTE_ID_CODE = "#execute"
 EXECUTE_LABEL = "Execute"
 
-RANDOM_ID = "random"
-RANDOM_TEXT_ID = "randomText"
+BUTTON_AREA_ID = "buttons"
 RANDOM_BUTTON_ID = "randomButton"
-RANDOM_TEXT_ID_CODE = "#randomText"
 RANDOM_BUTTON_ID_CODE = "#randomButton"
 RANDOM_BUTTON_LABEL = "Get random message"
+RANDOM_MESSAGE_MAX_SIZE = 200
+
+LOG_CONTAINER_ID = "logContainer"
+LOG_ID = "log"
+LOG_CONTAINER_ID_CODE = "#logContainer"
+LOG_ID_CODE = "#log"
+
+LOG_MESSAGE = "The {} algorithm encountered an unexpected error during the {} operation."
+LOG_MAX_LINES = 3
+
+KEYBINDINGS = [("q", "quit", "Quit"),]

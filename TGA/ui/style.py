@@ -1,3 +1,5 @@
+STYLESHEET = """
+
 Screen {
     overflow: auto;
 }
@@ -6,13 +8,26 @@ Screen {
     layout: vertical;
 }
 
+#textContainer {
+    min-height: 6;
+    background: #5C3D2E;
+    padding: 1;
+}
+
+#optionsContainer {
+    min-height: 5;
+    max-height: 10;
+    background: #5C3D2E;
+    padding: 1;
+}
+
 #text {
+    min-height: 10;
 }
 
 #options {
     layout: horizontal;
     width: 100%;
-    background: purple 30%;
     content-align: center middle;
     align: center middle;
     height: 7;
@@ -20,11 +35,13 @@ Screen {
 
 #operation {
     height: 100%;
+    background: #2D2424;
     width: 40%;
 }
 
 #algorithm {
     height: 100%;
+    background: #2D2424;
     width: 40%;
 }
 
@@ -34,7 +51,7 @@ Screen {
     text-align: center;
     align: center middle;
     text-style: bold;
-    background: green 50%;
+    background: #B85C38;
 }
 
 #input {
@@ -44,15 +61,21 @@ Screen {
 
 #inputArea {
     width: 100%;
+    background: #2D2424;
     height: 3;
 }
 
 #inputText{
     width: 100%;
+    background: #2D2424;
 }
 
 #output {
     width: 40%;
+}
+
+#outputText {
+    background: #2D2424;
 }
 
 #alphabet {
@@ -64,7 +87,7 @@ Screen {
     text-align: center;
     align: center middle;
     text-style: bold;
-    background: cyan 50%;
+    background: #E0C097;
 }
 
 #buttons {
@@ -72,7 +95,21 @@ Screen {
     height: 100%
 }
 
+#logContainer {
+    background: #5C3D2E;
+    height: 4;
+    padding: 0 1 1 2;
+}
+
+#log {
+    background: #2D2424;
+    height: 3;
+    scrollbar-size: 0 0;
+}
+
 Label {
     width: 100%;
     text-align: center;
 }
+
+"""

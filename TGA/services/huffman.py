@@ -1,11 +1,14 @@
 from collections import Counter
 from operator import itemgetter
 
-prefix = '1'
-stop_bit = '0'
+#region LOCAL CONSTANTS
+prefix = "1"
+stop_bit = "0"
+#endregion
 
+#region ENCODE
 def encode(input) -> tuple:
-    output = ''
+    output = ""
     alphabet = Counter(input)
     
     frequencies = sorted(alphabet.items(), key = itemgetter(1))
@@ -17,7 +20,7 @@ def encode(input) -> tuple:
     for i, (char, _) in enumerate(frequencies):
         codeword = (alphabet_size - offset) * prefix
         
-        if i == 0: 
+        if i == 0 and alphabet_size != 1: 
             codeword += prefix
         else: 
             codeword += stop_bit
@@ -33,9 +36,12 @@ def encode(input) -> tuple:
     user_alphabet = {k: v for k, v in sorted(user_alphabet.items(), key=lambda item: item[1][1])}
     
     return (output, alphabet, user_alphabet)
+#endregion
 
+#region DECODE
 def decode(input, alphabet) -> str:
-    output = ''
+    output = ""
+    if len(alphabet) == 0: return output
     
     frequencies = sorted(alphabet.items(), key = itemgetter(1))
     
@@ -46,7 +52,7 @@ def decode(input, alphabet) -> str:
     for i, (char, _) in enumerate(frequencies):
         codeword = (alphabet_size - offset) * prefix
         
-        if i == 0: 
+        if i == 0 and alphabet_size != 1: 
             codeword += prefix
         else: 
             codeword += stop_bit
@@ -54,7 +60,7 @@ def decode(input, alphabet) -> str:
             
         codewords[codeword] = char
     
-    codeword = ''
+    codeword = ""
     count = 1
     for bit in input:
         codeword += bit
@@ -62,7 +68,8 @@ def decode(input, alphabet) -> str:
         
         if count >= alphabet_size or bit is stop_bit:
             output += codewords[codeword]
-            codeword = ''
+            codeword = ""
             count = 1
     
     return output
+#endregion

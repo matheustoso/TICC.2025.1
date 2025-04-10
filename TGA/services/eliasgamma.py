@@ -1,8 +1,11 @@
 import math
 
+#region LOCAL CONSTANTS
 prefix = "0"
 stop_bit = "1"
+#endregion
 
+#region ENCODE
 def encode(input, alphabet) -> str:
     output = ""
     
@@ -18,7 +21,9 @@ def encode(input, alphabet) -> str:
         output += codeword
     
     return output
+#endregion
 
+#region DECODE
 def decode(input, alphabet) -> str:
     alphabet = {v: k for k, v in alphabet.items()}
     
@@ -48,3 +53,4 @@ def decode(input, alphabet) -> str:
                 is_prefix = True
     
     return output
+#endregion

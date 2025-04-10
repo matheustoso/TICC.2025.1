@@ -1,3 +1,4 @@
+#region ENCODE
 def encode(input, alphabet) -> str:
     output = ""
     
@@ -19,6 +20,7 @@ def encode(input, alphabet) -> str:
     
     return output
 
+
 def get_fibonacci_up_to(n) -> list:
     sequence = [1, 2]
     
@@ -29,12 +31,14 @@ def get_fibonacci_up_to(n) -> list:
         sequence.append(next_fibonacci)
         
     return sequence
+#endregion
 
+#region DECODE
 def decode(input, alphabet) -> str:
     alphabet = {v: k for k, v in alphabet.items()}
     
     output = ""
-    codeword = ''
+    codeword = ""
     consecutive_ones = 0
     
     for bit in input:
@@ -53,15 +57,13 @@ def decode(input, alphabet) -> str:
             
             output += alphabet[symbol]
             
-            codeword = ''
+            codeword = ""
             consecutive_ones = 0
         else:
             codeword += bit    
     
     return output
-
-def parse_fibonacci_codeword(codeword) -> int:
-    return 0
+    
     
 def get_fibonacci_sequence(n) -> list:
     sequence = [1, 2]
@@ -73,3 +75,4 @@ def get_fibonacci_sequence(n) -> list:
         sequence.append(next_fibonacci)
         
     return sequence
+#endregion
