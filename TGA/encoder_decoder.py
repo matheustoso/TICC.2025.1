@@ -8,11 +8,14 @@ from domain.enums import *
 
 from services import golomb, eliasgamma, fibonacci, huffman
 
+import rstr
+
 class EncoderDecoder(App):
 
     operation = Operation.ENCODE
     algorithm = Algorithm.GOLOMB
     
+    user_alphabet = {}
     huffman_alphabet = {}
     alphabet = {}
     for i in range(256):
@@ -47,7 +50,8 @@ class EncoderDecoder(App):
             case Algorithm.HUFFMAN:   
                 match self.operation:
                     case Operation.ENCODE:
-                        self.output = huffman.decode(self.input, self.huffman_alphabet)
+                        self.output, self.huffman_alphabet, self.user_alphabet = huffman.encode(self.input)
+                        self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_alphabet)   
                     case Operation.DECODE:
                         self.output = huffman.decode(self.input, self.huffman_alphabet)
                         
@@ -57,7 +61,7 @@ class EncoderDecoder(App):
     #region GUI
 
     AUTO_FOCUS = "Input"
-
+    
     CSS_PATH = "ui/style.tcss"
     
     BINDINGS = [
@@ -77,7 +81,7 @@ class EncoderDecoder(App):
                     yield TextArea(id=OUTPUT_TEXT_ID, read_only=True)
                 with VerticalScroll(id=ALPHABET_ID):
                     yield Label(ALPHABET_LABEL)
-                    yield Pretty(self.alphabet) 
+                    yield Pretty(id=ALPHABET_TEXT_ID, object=self.alphabet) 
             yield Label(OPTIONS_LABEL)      
             with Horizontal(id=OPTIONS_ID):
                 with RadioSet(id=OPERATION_ID):
@@ -90,7 +94,9 @@ class EncoderDecoder(App):
                     yield RadioButton(Algorithm.ELIASGAMMA.value)
                     yield RadioButton(Algorithm.FIBONACCI.value)
                     yield RadioButton(Algorithm.HUFFMAN.value)
-                yield Button(id=EXECUTE_ID, label=EXECUTE_LABEL)
+                with Vertical(id="buttons"):
+                    yield Button(id=RANDOM_BUTTON_ID, label=RANDOM_BUTTON_LABEL)    
+                    yield Button(id=EXECUTE_ID, label=EXECUTE_LABEL)
         yield Footer()
 
     @on(RadioSet.Changed, OPERATION_ID_CODE)
@@ -100,13 +106,11 @@ class EncoderDecoder(App):
             case Operation.ENCODE:
                 self.query_one(INPUT_AREA_ID_CODE).clear()
                 self.query_one(INPUT_TEXT_ID_CODE).clear()
-                self.query_one(OUTPUT_TEXT_ID_CODE).clear()
                 self.query_one(INPUT_AREA_ID_CODE).restrict = ASCII255_REGEX
                 self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER
             case Operation.DECODE:
                 self.query_one(INPUT_AREA_ID_CODE).clear()
                 self.query_one(INPUT_TEXT_ID_CODE).clear()
-                self.query_one(OUTPUT_TEXT_ID_CODE).clear()
                 self.query_one(INPUT_AREA_ID_CODE).restrict = BINARY_REGEX
                 self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_DECODE_PLACEHOLDER
         
@@ -114,6 +118,10 @@ class EncoderDecoder(App):
     def on_algorithm_changed(self, event: RadioSet.Changed) -> None:
         self.query_one(OUTPUT_TEXT_ID_CODE).clear()
         self.algorithm = Algorithm(event.pressed.label)
+        if self.algorithm is Algorithm.HUFFMAN:
+            self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_alphabet)
+        else:
+            self.query_one(ALPHABET_TEXT_ID_CODE).update(self.alphabet)
         
     @on(Input.Changed, INPUT_AREA_ID_CODE)
     def on_input_changed(self, event: Input.Changed) -> None:
@@ -122,12 +130,19 @@ class EncoderDecoder(App):
         self.query_one(INPUT_TEXT_ID_CODE).insert(self.input)
         
     @on(Input.Submitted, INPUT_AREA_ID_CODE)
-    def on_input_submitted(self) -> None:
-        self.execute()
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        self.query_one(EXECUTE_ID_CODE).press()
         
     @on(Button.Pressed, EXECUTE_ID_CODE)
-    def on_button_press(self) -> None:
+    def on_execute_press(self, event: Button.Pressed) -> None:
         self.execute()
+        
+    @on(Button.Pressed, RANDOM_BUTTON_ID_CODE)
+    def on_random_press(self) -> None:
+        message = rstr.rstr(rstr.nonwhitespace()+rstr.punctuation(), 50)
+        self.input = message
+        self.query_one(INPUT_AREA_ID_CODE).clear()
+        self.query_one(INPUT_AREA_ID_CODE).insert(message, 0)
         
     #endregion
 

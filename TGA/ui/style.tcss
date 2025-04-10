@@ -15,19 +15,22 @@ Screen {
     background: purple 30%;
     content-align: center middle;
     align: center middle;
-    height: 10;
+    height: 7;
 }
 
 #operation {
-    width: 30%;
+    height: 100%;
+    width: 40%;
 }
 
 #algorithm {
-    width: 30%;
+    height: 100%;
+    width: 40%;
 }
 
 #execute {
-    width: 30%;
+    margin: 1 0 0 0;
+    width: 100%;
     text-align: center;
     align: center middle;
     text-style: bold;
@@ -36,6 +39,16 @@ Screen {
 
 #input {
     width: 40%;
+    content-align: center middle;
+}
+
+#inputArea {
+    width: 100%;
+    height: 3;
+}
+
+#inputText{
+    width: 100%;
 }
 
 #output {
@@ -44,6 +57,19 @@ Screen {
 
 #alphabet {
     width: 20%;
+}
+
+#randomButton {
+    width: 100%;
+    text-align: center;
+    align: center middle;
+    text-style: bold;
+    background: cyan 50%;
+}
+
+#buttons {
+    width: 20%;
+    height: 100%
 }
 
 Label {
