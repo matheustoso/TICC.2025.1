@@ -1,6 +1,6 @@
 ## Instalação
 
-Basta baixar o arquivo .exe na release TGA-1.0
+Basta baixar o arquivo .exe na release [TGA-1.0](https://github.com/matheustoso/TICC.2025.1/releases/tag/v1.0):
 
 ## Uso
 
