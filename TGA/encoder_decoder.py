@@ -69,8 +69,7 @@ class EncoderDecoder(App):
         self.operation = Operation(event.pressed.label)
         input_area = self.query_one(INPUT_AREA_ID_CODE)
         input_area.clear()
-        self.query_one(INPUT_TEXT_ID_CODE).clear()
-        
+
         match self.operation:
             case Operation.ENCODE:
                 self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
@@ -82,6 +81,9 @@ class EncoderDecoder(App):
                 input_area.restrict = BINARY_REGEX
                 input_area.placeholder = INPUT_DECODE_PLACEHOLDER
         
+        input_area.insert(self.output, 0)
+        self.query_one(OUTPUT_TEXT_ID_CODE).clear()
+
         
     @on(RadioSet.Changed, ALGORITHM_ID_CODE)
     def on_algorithm_changed(self, event: RadioSet.Changed) -> None:
