@@ -56,8 +56,11 @@ LOG_CONTAINER_ID = "logContainer"
 LOG_ID = "log"
 LOG_CONTAINER_ID_CODE = "#logContainer"
 LOG_ID_CODE = "#log"
+LOG_LABEL = "Logs"
 
-LOG_MESSAGE = "The {} algorithm encountered an unexpected error during the {} operation."
-LOG_MAX_LINES = 3
+LOG_MESSAGE = "The {} algorithm encountered an unexpected error during the {} operation:"
+LOG_MAX_LINES = 2
+
+EXCEPTION_MESSAGE_ATTRIBUTE = "message"
 
 KEYBINDINGS = [("q", "quit", "Quit"),]

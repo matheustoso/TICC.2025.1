@@ -15,18 +15,17 @@ def encode(input) -> tuple:
     
     codewords = {}
     
-    offset = 2
+    offset = 1
     alphabet_size = len(frequencies)
     for i, (char, _) in enumerate(frequencies):
-        codeword = (alphabet_size - offset) * prefix
+        prefix_size = (alphabet_size - offset) 
+        codeword = prefix_size * prefix
         
-        if i == 0 and alphabet_size != 1: 
-            codeword += prefix
-        else: 
+        if i != 0 or alphabet_size == 1:
             codeword += stop_bit
-            offset += 1
             
         codewords[char] = codeword
+        offset += 1
     
     for char in input:
         output += codewords[char]
@@ -47,21 +46,22 @@ def decode(input, alphabet) -> str:
     
     codewords = {}
     
-    offset = 2
+    offset = 1
     alphabet_size = len(frequencies)
+    
     for i, (char, _) in enumerate(frequencies):
-        codeword = (alphabet_size - offset) * prefix
+        prefix_size = (alphabet_size - offset) 
+        codeword = prefix_size * prefix
         
-        if i == 0 and alphabet_size != 1: 
-            codeword += prefix
-        else: 
+        if i != 0 or alphabet_size == 1: 
             codeword += stop_bit
-            offset += 1
             
         codewords[codeword] = char
+        offset += 1
     
     codeword = ""
     count = 1
+    
     for bit in input:
         codeword += bit
         count += 1

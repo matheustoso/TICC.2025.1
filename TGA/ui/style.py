@@ -17,10 +17,9 @@ Screen {
 }
 
 #optionsContainer {
-    min-height: 5;
-    max-height: 10;
+    height: 8;
     background: #5C3D2E;
-    padding: 1;
+    padding: 0 1 1 1;
 }
 
 #text {
@@ -100,12 +99,12 @@ Screen {
 #logContainer {
     background: #5C3D2E;
     height: 4;
-    padding: 0 1 1 2;
+    padding: 0 1 0 2;
 }
 
 #log {
     background: #2D2424;
-    height: 3;
+    height: 2;
     scrollbar-size: 0 0;
 }
 

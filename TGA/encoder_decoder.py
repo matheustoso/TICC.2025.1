@@ -12,14 +12,72 @@ import rstr
 
 class EncoderDecoder(App):
 
-#region UI CONSTANTS
-    AUTO_FOCUS = INPUT_AREA_ID_CODE
-    CSS = STYLESHEET
-    BINDINGS = KEYBINDINGS
+#region ENCODING/DECODING SERVICE
+    operation = Operation.ENCODE
+    algorithm = Algorithm.GOLOMB
     
+    user_huffman_alphabet = {}
+    huffman_alphabet = {}
+    alphabet = {}
+    for i in range(ASCII_LENGTH):
+        alphabet[chr(i)] = i  
+    
+    input = ""
+    output = ""
+
+    def execute(self) -> None: 
+        try:
+            match self.algorithm:
+                case Algorithm.GOLOMB:
+                    match self.operation:
+                        case Operation.ENCODE:
+                            self.output = golomb.encode(self.input, self.alphabet)
+                            
+                        case Operation.DECODE:
+                            self.output = golomb.decode(self.input, self.alphabet)
+
+                case Algorithm.ELIASGAMMA:
+                    match self.operation:
+                        case Operation.ENCODE:
+                            self.output = eliasgamma.encode(self.input, self.alphabet)
+                            
+                        case Operation.DECODE:
+                            self.output = eliasgamma.decode(self.input, self.alphabet)
+
+                case Algorithm.FIBONACCI:
+                    match self.operation:
+                        case Operation.ENCODE:
+                            self.output = fibonacci.encode(self.input, self.alphabet)
+                            
+                        case Operation.DECODE:
+                            self.output = fibonacci.decode(self.input, self.alphabet)
+
+                case Algorithm.HUFFMAN:   
+                    match self.operation:
+                        case Operation.ENCODE:
+                            self.output, self.huffman_alphabet, self.user_huffman_alphabet = huffman.encode(self.input)
+                            self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_huffman_alphabet)   
+                            
+                        case Operation.DECODE:
+                            self.output = huffman.decode(self.input, self.huffman_alphabet)
+
+            output_text = self.query_one(OUTPUT_TEXT_ID_CODE)
+            output_text.clear()
+            output_text.insert(self.output)
+            self.query_one(LOG_ID_CODE).clear()
+            
+        except Exception as e: 
+            logger = self.query_one(LOG_ID_CODE)
+            logger.write_line(LOG_MESSAGE.format(self.algorithm.value, self.operation.value.lower()))
+            logger.write_line(getattr(e, EXCEPTION_MESSAGE_ATTRIBUTE, repr(e)))
+                
 #endregion
 
-#region UI COMPOSE
+#region UI
+    CSS = STYLESHEET
+    AUTO_FOCUS = INPUT_AREA_ID_CODE
+    BINDINGS = KEYBINDINGS
+    
     def compose(self) -> ComposeResult:
         self.theme = THEME
         yield Header()
@@ -58,12 +116,11 @@ class EncoderDecoder(App):
                         yield Button(id=EXECUTE_ID, label=EXECUTE_LABEL)
                         
             with VerticalScroll(id=LOG_CONTAINER_ID):
+                yield Label(LOG_LABEL)
                 yield Log(id=LOG_ID, max_lines=LOG_MAX_LINES)
                     
         yield Footer()
-#endregion
 
-#region EVENT HANDLERS
     @on(RadioSet.Changed, OPERATION_ID_CODE)
     def on_operation_changed(self, event: RadioSet.Changed) -> None:
         self.operation = Operation(event.pressed.label)
@@ -121,64 +178,6 @@ class EncoderDecoder(App):
             input_area = self.query_one(INPUT_AREA_ID_CODE)
             input_area.clear()
             input_area.insert(message, 0)
-#endregion
-
-#region ENCODING/DECODING SERVICE
-    operation = Operation.ENCODE
-    algorithm = Algorithm.GOLOMB
-    
-    user_huffman_alphabet = {}
-    huffman_alphabet = {}
-    alphabet = {}
-    for i in range(ASCII_LENGTH):
-        alphabet[chr(i)] = i  
-    
-    input = ""
-    output = ""
-    
-    def execute(self) -> None: 
-        try:
-            match self.algorithm:
-                case Algorithm.GOLOMB:
-                    match self.operation:
-                        case Operation.ENCODE:
-                            self.output = golomb.encode(self.input, self.alphabet)
-                            
-                        case Operation.DECODE:
-                            self.output = golomb.decode(self.input, self.alphabet)
-
-                case Algorithm.ELIASGAMMA:
-                    match self.operation:
-                        case Operation.ENCODE:
-                            self.output = eliasgamma.encode(self.input, self.alphabet)
-                            
-                        case Operation.DECODE:
-                            self.output = eliasgamma.decode(self.input, self.alphabet)
-
-                case Algorithm.FIBONACCI:
-                    match self.operation:
-                        case Operation.ENCODE:
-                            self.output = fibonacci.encode(self.input, self.alphabet)
-                            
-                        case Operation.DECODE:
-                            self.output = fibonacci.decode(self.input, self.alphabet)
-
-                case Algorithm.HUFFMAN:   
-                    match self.operation:
-                        case Operation.ENCODE:
-                            self.output, self.huffman_alphabet, self.user_huffman_alphabet = huffman.encode(self.input)
-                            self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_huffman_alphabet)   
-                            
-                        case Operation.DECODE:
-                            self.output = huffman.decode(self.input, self.huffman_alphabet)
-
-            output_text = self.query_one(OUTPUT_TEXT_ID_CODE)
-            output_text.clear()
-            output_text.insert(self.output)
-            self.query_one(LOG_ID_CODE).clear()
-            
-        except: 
-            self.query_one(LOG_ID_CODE).write_line(LOG_MESSAGE.format(self.algorithm.value, self.operation.value.lower()))
 #endregion
 
 #region __main__
