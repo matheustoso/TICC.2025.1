@@ -1,6 +1,7 @@
 ASCII_REGEX = r"[\x00-ÿ]*"
 ASCII_LENGTH = 256
 BINARY_REGEX = r"[01]*"
+CAESAR_KEY_REGEX = r"^[0-9]|^1[0-9]|^2[0-5]|^$"
 
 THEME = "gruvbox"
 
@@ -19,7 +20,13 @@ INPUT_TEXT_ID = "inputText"
 INPUT_TEXT_ID_CODE = "#inputText"
 INPUT_LABEL = "Input"
 INPUT_ENCODE_PLACEHOLDER = "Text to encode"
+INPUT_ENCRYPT_PLACEHOLDER = "Text to encrypt"
 INPUT_DECODE_PLACEHOLDER = "Bits to decode"
+INPUT_DECRYPT_PLACEHOLDER = "Text to decrypt"
+CAESAR_KEY_PLACEHOLDER = "Caesar Cypher key (0-25)"
+
+KEY_AREA_ID = "keyArea"
+KEY_AREA_ID_CODE = "#keyArea"
 
 OUTPUT_ID = "output"
 OUTPUT_TEXT_ID = "outputText"

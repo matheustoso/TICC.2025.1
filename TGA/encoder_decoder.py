@@ -1,14 +1,15 @@
 from textual import on
 from textual.app import App, ComposeResult
+from textual.reactive import reactive
 from textual.containers import Vertical, Horizontal, VerticalScroll
 from textual.widgets import Button, TextArea, Header, Footer, RadioButton, RadioSet, Input, Label, Pretty, Log
 
 from domain.constants import *
 from domain.enums import *
 from ui.style import *
-from services import golomb, eliasgamma, fibonacci, huffman
+from services import golomb, eliasgamma, fibonacci, huffman, caesar_cypher
 
-import rstr
+import rstr, string
 
 class EncoderDecoder(App):
 
@@ -24,6 +25,7 @@ class EncoderDecoder(App):
     
     input = ""
     output = ""
+    key = 0
 
     def execute(self) -> None: 
         try:
@@ -60,6 +62,14 @@ class EncoderDecoder(App):
                             
                         case Operation.DECODE:
                             self.output = huffman.decode(self.input, self.huffman_alphabet)
+                            
+                case Algorithm.CAESAR_CYPHER:
+                    match self.operation:
+                        case Operation.ENCODE:
+                            self.output = caesar_cypher.encode(self.input, self.key)
+                            
+                        case Operation.DECODE:
+                            self.output = caesar_cypher.decode(self.input, self.key)
 
             output_text = self.query_one(OUTPUT_TEXT_ID_CODE)
             output_text.clear()
@@ -110,8 +120,10 @@ class EncoderDecoder(App):
                         yield RadioButton(Algorithm.ELIASGAMMA.value)
                         yield RadioButton(Algorithm.FIBONACCI.value)
                         yield RadioButton(Algorithm.HUFFMAN.value)
+                        yield RadioButton(Algorithm.CAESAR_CYPHER.value)
                         
                     with Vertical(id=BUTTON_AREA_ID):
+                        yield Input(id=KEY_AREA_ID, restrict=CAESAR_KEY_REGEX, placeholder=CAESAR_KEY_PLACEHOLDER)
                         yield Button(id=RANDOM_BUTTON_ID, label=RANDOM_BUTTON_LABEL)    
                         yield Button(id=EXECUTE_ID, label=EXECUTE_LABEL)
                         
@@ -127,16 +139,26 @@ class EncoderDecoder(App):
         input_area = self.query_one(INPUT_AREA_ID_CODE)
         input_area.clear()
 
-        match self.operation:
-            case Operation.ENCODE:
-                self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
-                input_area.restrict = ASCII_REGEX
-                input_area.placeholder = INPUT_ENCODE_PLACEHOLDER
-                
-            case Operation.DECODE:
-                self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
-                input_area.restrict = BINARY_REGEX
-                input_area.placeholder = INPUT_DECODE_PLACEHOLDER
+        if self.algorithm is Algorithm.CAESAR_CYPHER:
+            self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
+            input_area.restrict = ASCII_REGEX
+            match self.operation:
+                case Operation.ENCODE:
+                    input_area.placeholder = INPUT_ENCRYPT_PLACEHOLDER
+                case Operation.DECODE:
+                    input_area.placeholder = INPUT_DECRYPT_PLACEHOLDER
+
+        else: 
+            match self.operation:
+                case Operation.ENCODE:
+                    self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
+                    input_area.restrict = ASCII_REGEX
+                    input_area.placeholder = INPUT_ENCODE_PLACEHOLDER
+
+                case Operation.DECODE:
+                    self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
+                    input_area.restrict = BINARY_REGEX
+                    input_area.placeholder = INPUT_DECODE_PLACEHOLDER
         
         input_area.insert(self.output, 0)
         self.query_one(OUTPUT_TEXT_ID_CODE).clear()
@@ -147,9 +169,22 @@ class EncoderDecoder(App):
         self.query_one(OUTPUT_TEXT_ID_CODE).clear()
         self.algorithm = Algorithm(event.pressed.label)
         if self.algorithm is Algorithm.HUFFMAN:
+            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER if self.operation is Operation.ENCODE else INPUT_DECODE_PLACEHOLDER
             self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_huffman_alphabet)
+            self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
+            self.query_one(KEY_AREA_ID_CODE).disabled = True
+        if self.algorithm is Algorithm.CAESAR_CYPHER:
+            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCRYPT_PLACEHOLDER if self.operation is Operation.ENCODE else INPUT_DECRYPT_PLACEHOLDER
+            self.query_one(INPUT_AREA_ID_CODE).restrict = ASCII_REGEX
+            self.query_one(ALPHABET_TEXT_ID_CODE).update(list(string.ascii_letters))
+            self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
+            self.query_one(KEY_AREA_ID_CODE).disabled = False
         else:
+            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER if self.operation is Operation.ENCODE else INPUT_DECODE_PLACEHOLDER
             self.query_one(ALPHABET_TEXT_ID_CODE).update(self.alphabet)
+            self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
+            self.query_one(KEY_AREA_ID_CODE).disabled = True
+            
         
         
     @on(Input.Changed, INPUT_AREA_ID_CODE)
@@ -159,6 +194,9 @@ class EncoderDecoder(App):
         input_text.clear()
         input_text.insert(self.input)
         
+    @on(Input.Changed, KEY_AREA_ID_CODE)
+    def on_key_changed(self, event: Input.Changed) -> None:
+        self.key = 0 if not event.input.value else int(event.input.value)
         
     @on(Input.Submitted, INPUT_AREA_ID_CODE)
     def on_input_submitted(self) -> None:
@@ -169,15 +207,17 @@ class EncoderDecoder(App):
     def on_execute_press(self) -> None:
         self.execute()
         
-        
     @on(Button.Pressed, RANDOM_BUTTON_ID_CODE)
     def on_random_press(self) -> None:
-        if self.operation is Operation.ENCODE:
+        if self.operation is Operation.ENCODE and self.algorithm is not Algorithm.CAESAR_CYPHER:
             message = rstr.rstr(rstr.nonwhitespace() + rstr.punctuation(), RANDOM_MESSAGE_MAX_SIZE)
             self.input = message
             input_area = self.query_one(INPUT_AREA_ID_CODE)
             input_area.clear()
             input_area.insert(message, 0)
+            
+    def on_mount(self) -> None:
+        self.query_one(KEY_AREA_ID_CODE).disabled = True
 #endregion
 
 #region __main__

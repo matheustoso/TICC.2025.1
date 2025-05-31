@@ -17,7 +17,7 @@ Screen {
 }
 
 #optionsContainer {
-    height: 8;
+    height: 12;
     background: #5C3D2E;
     padding: 0 1 1 1;
 }
@@ -31,7 +31,7 @@ Screen {
     width: 100%;
     content-align: center middle;
     align: center middle;
-    height: 7;
+    height: 11;
 }
 
 #operation {
@@ -66,6 +66,12 @@ Screen {
     height: 3;
 }
 
+#keyArea {
+    width: 100%;
+    background: #2D2424;
+    height: 3;
+}
+
 #inputText{
     width: 100%;
     background: #2D2424;
@@ -84,6 +90,7 @@ Screen {
 }
 
 #randomButton {
+    margin: 1 0 0 0;
     width: 100%;
     text-align: center;
     align: center middle;
