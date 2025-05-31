@@ -14,7 +14,7 @@ import rstr, string
 class EncoderDecoder(App):
 
 #region ENCODING/DECODING SERVICE
-    operation = Operation.ENCODE
+    operation = Operation.ENCODE_ENCRYPT
     algorithm = Algorithm.GOLOMB
     
     user_huffman_alphabet = {}
@@ -32,44 +32,44 @@ class EncoderDecoder(App):
             match self.algorithm:
                 case Algorithm.GOLOMB:
                     match self.operation:
-                        case Operation.ENCODE:
+                        case Operation.ENCODE_ENCRYPT:
                             self.output = golomb.encode(self.input, self.alphabet)
                             
-                        case Operation.DECODE:
+                        case Operation.DECODE_DECRYPT:
                             self.output = golomb.decode(self.input, self.alphabet)
 
                 case Algorithm.ELIASGAMMA:
                     match self.operation:
-                        case Operation.ENCODE:
+                        case Operation.ENCODE_ENCRYPT:
                             self.output = eliasgamma.encode(self.input, self.alphabet)
                             
-                        case Operation.DECODE:
+                        case Operation.DECODE_DECRYPT:
                             self.output = eliasgamma.decode(self.input, self.alphabet)
 
                 case Algorithm.FIBONACCI:
                     match self.operation:
-                        case Operation.ENCODE:
+                        case Operation.ENCODE_ENCRYPT:
                             self.output = fibonacci.encode(self.input, self.alphabet)
                             
-                        case Operation.DECODE:
+                        case Operation.DECODE_DECRYPT:
                             self.output = fibonacci.decode(self.input, self.alphabet)
 
                 case Algorithm.HUFFMAN:   
                     match self.operation:
-                        case Operation.ENCODE:
+                        case Operation.ENCODE_ENCRYPT:
                             self.output, self.huffman_alphabet, self.user_huffman_alphabet = huffman.encode(self.input)
                             self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_huffman_alphabet)   
                             
-                        case Operation.DECODE:
+                        case Operation.DECODE_DECRYPT:
                             self.output = huffman.decode(self.input, self.huffman_alphabet)
                             
                 case Algorithm.CAESAR_CYPHER:
                     match self.operation:
-                        case Operation.ENCODE:
-                            self.output = caesar_cypher.encode(self.input, self.key)
+                        case Operation.ENCODE_ENCRYPT:
+                            self.output = caesar_cypher.encrypt(self.input, self.key)
                             
-                        case Operation.DECODE:
-                            self.output = caesar_cypher.decode(self.input, self.key)
+                        case Operation.DECODE_DECRYPT:
+                            self.output = caesar_cypher.decrypt(self.input, self.key)
 
             output_text = self.query_one(OUTPUT_TEXT_ID_CODE)
             output_text.clear()
@@ -111,8 +111,8 @@ class EncoderDecoder(App):
                 with Horizontal(id=OPTIONS_ID):
                     with RadioSet(id=OPERATION_ID):
                         yield Label(OPERATION_LABEL)
-                        yield RadioButton(Operation.ENCODE.value, value=True)
-                        yield RadioButton(Operation.DECODE.value)
+                        yield RadioButton(Operation.ENCODE_ENCRYPT.value, value=True)
+                        yield RadioButton(Operation.DECODE_DECRYPT.value)
                         
                     with RadioSet(id=ALGORITHM_ID):
                         yield Label(ALGORITHM_LABEL)
@@ -143,19 +143,19 @@ class EncoderDecoder(App):
             self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
             input_area.restrict = ASCII_REGEX
             match self.operation:
-                case Operation.ENCODE:
+                case Operation.ENCODE_ENCRYPT:
                     input_area.placeholder = INPUT_ENCRYPT_PLACEHOLDER
-                case Operation.DECODE:
+                case Operation.DECODE_DECRYPT:
                     input_area.placeholder = INPUT_DECRYPT_PLACEHOLDER
 
         else: 
             match self.operation:
-                case Operation.ENCODE:
+                case Operation.ENCODE_ENCRYPT:
                     self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
                     input_area.restrict = ASCII_REGEX
                     input_area.placeholder = INPUT_ENCODE_PLACEHOLDER
 
-                case Operation.DECODE:
+                case Operation.DECODE_DECRYPT:
                     self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
                     input_area.restrict = BINARY_REGEX
                     input_area.placeholder = INPUT_DECODE_PLACEHOLDER
@@ -169,18 +169,18 @@ class EncoderDecoder(App):
         self.query_one(OUTPUT_TEXT_ID_CODE).clear()
         self.algorithm = Algorithm(event.pressed.label)
         if self.algorithm is Algorithm.HUFFMAN:
-            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER if self.operation is Operation.ENCODE else INPUT_DECODE_PLACEHOLDER
+            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER if self.operation is Operation.ENCODE_ENCRYPT else INPUT_DECODE_PLACEHOLDER
             self.query_one(ALPHABET_TEXT_ID_CODE).update(self.user_huffman_alphabet)
             self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
             self.query_one(KEY_AREA_ID_CODE).disabled = True
         if self.algorithm is Algorithm.CAESAR_CYPHER:
-            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCRYPT_PLACEHOLDER if self.operation is Operation.ENCODE else INPUT_DECRYPT_PLACEHOLDER
+            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCRYPT_PLACEHOLDER if self.operation is Operation.ENCODE_ENCRYPT else INPUT_DECRYPT_PLACEHOLDER
             self.query_one(INPUT_AREA_ID_CODE).restrict = ASCII_REGEX
             self.query_one(ALPHABET_TEXT_ID_CODE).update(list(string.ascii_letters))
             self.query_one(RANDOM_BUTTON_ID_CODE).disabled = True
             self.query_one(KEY_AREA_ID_CODE).disabled = False
         else:
-            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER if self.operation is Operation.ENCODE else INPUT_DECODE_PLACEHOLDER
+            self.query_one(INPUT_AREA_ID_CODE).placeholder = INPUT_ENCODE_PLACEHOLDER if self.operation is Operation.ENCODE_ENCRYPT else INPUT_DECODE_PLACEHOLDER
             self.query_one(ALPHABET_TEXT_ID_CODE).update(self.alphabet)
             self.query_one(RANDOM_BUTTON_ID_CODE).disabled = False
             self.query_one(KEY_AREA_ID_CODE).disabled = True
@@ -209,7 +209,7 @@ class EncoderDecoder(App):
         
     @on(Button.Pressed, RANDOM_BUTTON_ID_CODE)
     def on_random_press(self) -> None:
-        if self.operation is Operation.ENCODE and self.algorithm is not Algorithm.CAESAR_CYPHER:
+        if self.operation is Operation.ENCODE_ENCRYPT and self.algorithm is not Algorithm.CAESAR_CYPHER:
             message = rstr.rstr(rstr.nonwhitespace() + rstr.punctuation(), RANDOM_MESSAGE_MAX_SIZE)
             self.input = message
             input_area = self.query_one(INPUT_AREA_ID_CODE)

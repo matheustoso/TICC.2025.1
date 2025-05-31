@@ -2,8 +2,8 @@ from enum import StrEnum
 
 #region OPERATION
 class Operation(StrEnum):
-    ENCODE = "Encode/Encrypt",
-    DECODE = "Decode/Decrypt"
+    ENCODE_ENCRYPT = "Encode/Encrypt",
+    DECODE_DECRYPT = "Decode/Decrypt"
 #endregion
 
 #region ALGORITHM
