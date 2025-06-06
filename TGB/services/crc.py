@@ -6,7 +6,9 @@ def encode(input_text) -> str:
 
 def decode(input_text) -> tuple[str, list]:
     remainder = crc(input_text)
-    decoded_input = input_text[:(len(polynomial) - 1)]
+    remainder_size = len(remainder)
+    
+    decoded_input = input_text[:-remainder_size]
     bit_errors = []
 
     if "1" in remainder:
