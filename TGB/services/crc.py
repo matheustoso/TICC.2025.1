@@ -1,9 +1,11 @@
+polynomial = "11100111"
+
 def encode(input_text) -> str:
-    return input_text + crc4(f"{input_text}000")
+    return input_text + crc(f"{input_text}{'0' * (len(polynomial) - 1)}")
 
 
 def decode(input_text) -> tuple[str, list]:
-    remainder = crc4(input_text)
+    remainder = crc(input_text)
     decoded_input = input_text[:-3]
     bit_errors = []
 
@@ -25,8 +27,7 @@ def xor(x, y) -> str:
     return result
 
 
-def crc4(input_text) -> str:
-    polynomial = "0111"
+def crc(input_text) -> str:
 
     input_text_size = len(input_text)
     polynomial_size = len(polynomial)

@@ -26,5 +26,5 @@ class ErrorDetection(StrEnum):
     NONE = "None",
     REPETITION = "Repetition R3 - With correction",
     HAMMING = "Hamming (7,4) - With correction",
-    CRC = "CRC4 - Only detection"
+    CRC = "CRC - Only detection"
 #endregion
