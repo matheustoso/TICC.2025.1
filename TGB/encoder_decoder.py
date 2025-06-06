@@ -29,7 +29,7 @@ from services import (
     crc,
 )
 
-import rstr, string, random, lorem
+import string, random, lorem
 
 
 class EncoderDecoder(App):
@@ -69,9 +69,14 @@ class EncoderDecoder(App):
                         if self.error_detection is not ErrorDetection.NONE:
                             input_text, bit_errors = self.error_decode(input_text)
                             if len(bit_errors) > 0:
-                                logger.write_line(
-                                    LOG_NOISE.format(", ".join(bit_errors))
-                                )
+                                if self.error_detection is ErrorDetection.CRC:
+                                    logger.write_line(
+                                        LOG_CRC_NOISE.format("".join(bit_errors))
+                                    )
+                                else:
+                                    logger.write_line(
+                                        LOG_NOISE.format(", ".join(bit_errors))
+                                    )
                         input_text = self.decode(input_text)
                     if self.encryption is not Encryption.NONE:
                         input_text = self.decrypt(input_text)

@@ -1,9 +1,3 @@
-import math
-
-#region LOCAL CONSTANTS
-
-#endregion
-
 #region ENCRYPT
 def encrypt(input, key) -> str:
     output = ""

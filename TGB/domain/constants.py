@@ -76,6 +76,7 @@ LOG_LABEL = "Logs"
 
 LOG_MESSAGE = "The {} algorithm encountered an unexpected error during the {} operation:"
 LOG_NOISE = "Noise was detected and corrected for the bits in the following positions: {}"
+LOG_CRC_NOISE = "Noise was detected. CRC remainder: {}"
 LOG_MAX_LINES = 100
 
 EXCEPTION_MESSAGE_ATTRIBUTE = "message"

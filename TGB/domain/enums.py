@@ -24,7 +24,7 @@ class Encryption(StrEnum):
 #region ERROR_DETECTION
 class ErrorDetection(StrEnum):
     NONE = "None",
-    REPETITION = "Repetition R3",
-    HAMMING = "Hamming (7,4)",
-    CRC = "CRC"
+    REPETITION = "Repetition R3 - With correction",
+    HAMMING = "Hamming (7,4) - With correction",
+    CRC = "CRC4 - Only detection"
 #endregion
